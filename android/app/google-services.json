@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1042489353899",
+    "project_id": "newen-traceability",
+    "storage_bucket": "newen-traceability.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042489353899:android:6b22de7291d2a108ebf9ee",
+        "android_client_info": {
+          "package_name": "com.newen.newen_traceability"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAySn83F4HaXf9Fcva0ZrWlTP-62iclZYk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
