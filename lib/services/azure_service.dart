@@ -5,7 +5,6 @@ import '../Database/db_helper.dart';
 class AzureService {
   static const String baseUrl = "https://newen-tracibility.azurewebsites.net";
 
-  // Standard headers for Web compatibility
   static Map<String, String> get _headers => {
     "Content-Type": "application/json",
     "Accept": "application/json",
@@ -64,6 +63,29 @@ class AzureService {
     }
   }
 
+  static Future<void> syncFullPanel(String panelSerial) async {
+    try {
+      final db = await DBHelper.database;
+      final panelData = await db.query("panels", where: "panel_serial = ?", whereArgs: [panelSerial]);
+      if (panelData.isEmpty) return;
+
+      final response = await http.post(
+        Uri.parse("$baseUrl/sync_full_panel"),
+        headers: _headers,
+        body: jsonEncode({"panel": panelData.first, "components": []}),
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        await DBHelper.markPanelSynced(panelSerial);
+      } else {
+        throw Exception("Server Error: ${response.body}");
+      }
+    } catch (e) {
+      print("Sync full panel error: $e");
+      rethrow;
+    }
+  }
+
   static Future<List<Map<String, dynamic>>> fetchPanels() async {
     try {
       final response = await http.get(
@@ -83,13 +105,24 @@ class AzureService {
 
   static Future<Map<String, dynamic>> fetchSectionData(String panelSerial, String sectionName) async {
     try {
-      final response = await http.get(
-        Uri.parse("$baseUrl/get_section_data?panel=$panelSerial&section=$sectionName"),
-        headers: _headers,
-      );
-      if (response.statusCode == 200) return Map<String, dynamic>.from(jsonDecode(response.body));
+      // CRITICAL FIX: Encode query parameters for Web compatibility
+      final queryParams = {
+        'panel': panelSerial,
+        'section': sectionName,
+      };
+      final uri = Uri.parse("$baseUrl/get_section_data").replace(queryParameters: queryParams);
+      
+      print("Fetching Cloud Data for $sectionName...");
+      final response = await http.get(uri, headers: _headers);
+      
+      if (response.statusCode == 200) {
+        final data = Map<String, dynamic>.from(jsonDecode(response.body));
+        print("Found ${data.length} cloud entries for $sectionName");
+        return data;
+      }
       return {};
     } catch (e) {
+      print("Fetch Section Data Error: $e");
       return {};
     }
   }

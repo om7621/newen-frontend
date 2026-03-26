@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Database/db_helper.dart';
 import 'section_dashboard.dart';
+import '../services/azure_service.dart';
 
 class CreatePanelScreen extends StatefulWidget {
   const CreatePanelScreen({Key? key}) : super(key: key);
@@ -276,27 +277,38 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
       return;
     }
 
-    await DBHelper.insertPanel(
-      serial,
-      productType,
-      preparedBy ?? "",
-      startDate?.toString().split(" ")[0] ?? "",
-      projectName ?? "",
-      referenceDocController.text,
-      verifiedBy ?? "",
-      "",
-      remarksController.text,
-    );
+    try {
+      await DBHelper.insertPanel(
+        serial,
+        productType,
+        preparedBy ?? "",
+        startDate?.toString().split(" ")[0] ?? "",
+        projectName ?? "",
+        referenceDocController.text,
+        verifiedBy ?? "",
+        "",
+        remarksController.text,
+      );
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SectionDashboard(panelSerial: serial),
-      ),
-    );
+      // Force an immediate sync to Azure so the panel exists in the cloud
+      await AzureService.syncFullPanel(serial);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SectionDashboard(panelSerial: serial),
+        ),
+      );
+    } catch (e) {
+      // Even if sync fails, we proceed to dashboard (it will auto-sync later)
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => SectionDashboard(panelSerial: serial),
+        ),
+      );
+    }
   }
-
-  // --- Dialogs (Simplified) ---
 
   void _showAddDialog(String title, String label, List<String> list) {
     TextEditingController controller = TextEditingController();
