@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../templates/cps3000_template.dart';
 import '../templates/component_make_template.dart';
 import 'barcode_scanner_screen.dart';
@@ -24,7 +25,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   Map<String, String> serialValues = {};
   Map<String, String> makeValues = {};
   Set<String> savedComponents = {};
-  bool isSyncing = false;
+  bool isLoading = false;
   
   Map<String, TextEditingController> controllers = {};
   Map<String, FocusNode> focusNodes = {};
@@ -48,92 +49,123 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   }
 
   void loadData() async {
-    final data = await DBHelper.getSectionComponents(
-      widget.panelSerial,
-      widget.sectionName,
-    );
+    setState(() => isLoading = true);
+    
+    if (!kIsWeb) {
+      // 1. Load from Local Database (Mobile only)
+      final data = await DBHelper.getSectionComponents(
+        widget.panelSerial,
+        widget.sectionName,
+      );
 
-    setState(() {
-      for (var row in data) {
-        String comp = row["component"];
-        serialValues[comp] = row["serial"];
-        makeValues[comp] = row["make"];
-        controllers[comp]?.text = row["serial"] ?? "";
-        if (row["serial"] != null && row["serial"].toString().isNotEmpty) {
-          savedComponents.add(comp);
+      setState(() {
+        for (var row in data) {
+          String comp = row["component"];
+          serialValues[comp] = row["serial"];
+          makeValues[comp] = row["make"];
+          controllers[comp]?.text = row["serial"] ?? "";
+          if (row["serial"] != null && row["serial"].toString().isNotEmpty) {
+            savedComponents.add(comp);
+          }
         }
-      }
-    });
+      });
+    }
 
+    // 2. Fetch from Cloud (Azure SQL) - Required for Web and Shared Mobile
     try {
       final cloudData = await AzureService.fetchSectionData(widget.panelSerial, widget.sectionName);
       if (cloudData.isNotEmpty) {
         setState(() {
           cloudData.forEach((compName, details) {
-            serialValues[compName] = details["serial"];
-            makeValues[compName] = details["make"];
-            if (controllers.containsKey(compName)) {
-              controllers[compName]?.text = details["serial"] ?? "";
+            String cloudSerial = details["serial_number"] ?? "";
+            String cloudMake = details["make"] ?? "";
+            
+            if (cloudSerial.isNotEmpty) {
+              serialValues[compName] = cloudSerial;
+              makeValues[compName] = cloudMake;
+              if (controllers.containsKey(compName)) {
+                controllers[compName]?.text = cloudSerial;
+              }
+              savedComponents.add(compName);
             }
-            savedComponents.add(compName);
           });
         });
       }
     } catch (e) {
       print("Fetch error: $e");
+    } finally {
+      setState(() => isLoading = false);
     }
   }
 
-  Future<void> _saveLocal(String component) async {
+  Future<void> _handleSave(String component) async {
     if (serialValues[component] == null || serialValues[component]!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Enter serial number first")));
       return;
     }
+
+    if (kIsWeb) {
+      // Direct Sync for Web
+      await _syncAllToCloud();
+    } else {
+      // Local Save for Mobile
+      await DBHelper.insertComponent(
+        widget.panelSerial, 
+        widget.sectionName, 
+        component, 
+        serialValues[component] ?? "", 
+        makeValues[component] ?? ""
+      );
+      setState(() => savedComponents.add(component));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("$component Saved Locally"), duration: const Duration(milliseconds: 500)),
+      );
+    }
     
-    await DBHelper.insertComponent(
-      widget.panelSerial, 
-      widget.sectionName, 
-      component, 
-      serialValues[component] ?? "", 
-      makeValues[component] ?? ""
-    );
-    
-    setState(() => savedComponents.add(component));
-    
+    // Auto-focus logic
     int currentIndex = components.indexOf(component);
     if (currentIndex < components.length - 1) {
       focusNodes[components[currentIndex + 1]]?.requestFocus();
     } else {
       FocusScope.of(context).unfocus();
     }
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("$component Saved Local"), duration: const Duration(milliseconds: 500)),
-    );
   }
 
-  Future<void> syncSectionToCloud() async {
-    setState(() => isSyncing = true);
+  Future<void> _syncAllToCloud() async {
+    setState(() => isLoading = true);
     try {
-      List<Map<String, dynamic>> sectionUploadData = [];
+      // Prepare components for the full panel sync (Required by your backend logic)
+      List<Map<String, dynamic>> allComponentsToUpload = [];
+      
+      // We need to fetch all sections or just the current data we have
+      // For simplicity in the "Save" context, we send what's on screen
       for (var comp in components) {
         if (serialValues[comp] != null && serialValues[comp]!.isNotEmpty) {
-          sectionUploadData.add({
-            "component": comp,
-            "serial": serialValues[comp],
+          allComponentsToUpload.add({
+            "section_name": widget.sectionName,
+            "component_name": comp,
             "make": makeValues[comp] ?? "",
+            "serial_number": serialValues[comp],
           });
         }
       }
 
-      if (sectionUploadData.isNotEmpty) {
-        await AzureService.syncSection(widget.panelSerial, widget.sectionName, sectionUploadData);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Section synced to Azure")));
+      if (kIsWeb) {
+        // On Web, we send a "Full Sync" request with the data we have
+        await AzureService.syncFullPanel(
+          widget.panelSerial,
+          panelData: {"panel_serial": widget.panelSerial}, // Minimum required
+          components: allComponentsToUpload,
+        );
+      } else {
+        await AzureService.syncFullPanel(widget.panelSerial);
       }
+      
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Data Synced to Cloud")));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Sync failed: Check if server is running on Azure")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Sync failed: $e")));
     } finally {
-      setState(() => isSyncing = false);
+      setState(() => isLoading = false);
     }
   }
 
@@ -141,17 +173,17 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.sectionName}"),
+        title: Text(widget.sectionName),
         actions: [
-          if (isSyncing)
+          if (isLoading)
             const Padding(
               padding: EdgeInsets.all(15.0),
-              child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)),
+              child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)),
             )
           else
             IconButton(
               icon: const Icon(Icons.cloud_upload),
-              onPressed: syncSectionToCloud,
+              onPressed: _syncAllToCloud,
             )
         ],
       ),
@@ -205,7 +237,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
                           controller: controllers[component],
                           focusNode: focusNodes[component],
                           decoration: const InputDecoration(labelText: "Serial Number", border: OutlineInputBorder()),
-                          onSubmitted: (value) => _saveLocal(component), 
+                          onSubmitted: (value) => _handleSave(component), 
                           onChanged: (v) {
                             serialValues[component] = v;
                             if (savedComponents.contains(component)) {
@@ -214,10 +246,9 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
                           },
                         ),
                         const SizedBox(height: 10),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
+                        Row(
+                          children: [
+                            if (!kIsWeb)
                               ElevatedButton.icon(
                                 icon: const Icon(Icons.qr_code_scanner),
                                 onPressed: () async {
@@ -230,21 +261,19 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
                                     });
                                   }
                                 },
-                                label: const Text("CAMERA SCAN"),
+                                label: const Text("SCAN"),
                               ),
-                              const SizedBox(width: 8),
-                              ElevatedButton.icon(
-                                icon: const Icon(Icons.save),
-                                onPressed: () => _saveLocal(component),
-                                label: const Text("SAVE LOCAL"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green.shade700, 
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                ),
+                            const SizedBox(width: 8),
+                            ElevatedButton.icon(
+                              icon: Icon(kIsWeb ? Icons.cloud_upload : Icons.save),
+                              onPressed: () => _handleSave(component),
+                              label: Text(kIsWeb ? "SYNC TO CLOUD" : "SAVE LOCAL"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green.shade700, 
+                                foregroundColor: Colors.white,
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
