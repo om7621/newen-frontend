@@ -6,25 +6,33 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 class DBHelper {
   static Database? _database;
+  static Future<Database>? _initFuture;
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _initDB();
+    
+    // Ensure initialization only happens once
+    _initFuture ??= _initDB();
+    _database = await _initFuture;
     return _database!;
   }
 
   static Future<Database> _initDB() async {
     if (kIsWeb) {
-      // Initialize for Web
-      var factory = databaseFactoryFfiWeb;
-      return await factory.openDatabase('traceability.db',
-          options: OpenDatabaseOptions(
-            version: 2,
-            onCreate: _createDB,
-            onUpgrade: _onUpgrade,
-          ));
+      try {
+        var factory = databaseFactoryFfiWeb;
+        return await factory.openDatabase('traceability.db',
+            options: OpenDatabaseOptions(
+              version: 2,
+              onCreate: _createDB,
+              onUpgrade: _onUpgrade,
+            ));
+      } catch (e) {
+        // Fallback for some web environments
+        print("Web DB Init error: $e");
+        rethrow;
+      }
     } else {
-      // Standard initialization for Android/iOS
       String path = join(await getDatabasesPath(), 'traceability.db');
       return await openDatabase(
         path,
@@ -76,7 +84,6 @@ class DBHelper {
     ''');
   }
 
-  // --- Logic for Sync ---
   static Future<void> insertPanel(
       String panelSerial, String productType, String preparedBy, String startDate,
       String projectName, String referenceDoc, String verifiedBy, String approvedBy, String remarks,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../templates/cps3000_template.dart';
+import '../templates/dps_template.dart';
 import '../templates/component_make_template.dart';
 import 'barcode_scanner_screen.dart';
 import '../Database/db_helper.dart';
@@ -9,11 +10,13 @@ import '../services/azure_service.dart';
 class ComponentEntryScreen extends StatefulWidget {
   final String sectionName;
   final String panelSerial;
+  final String productType;
 
   const ComponentEntryScreen({
     super.key,
     required this.sectionName,
     required this.panelSerial,
+    this.productType = "CPS3000",
   });
 
   @override
@@ -33,7 +36,13 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   @override
   void initState() {
     super.initState();
-    components = CPS3000Template.sections[widget.sectionName] ?? [];
+    // Load components based on product type
+    if (widget.productType == "DPS") {
+      components = DPSTemplate.sections[widget.sectionName] ?? [];
+    } else {
+      components = CPS3000Template.sections[widget.sectionName] ?? [];
+    }
+
     for (var comp in components) {
       controllers[comp] = TextEditingController();
       focusNodes[comp] = FocusNode();
@@ -52,7 +61,6 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
     setState(() => isLoading = true);
     
     if (!kIsWeb) {
-      // 1. Load from Local Database (Mobile only)
       final data = await DBHelper.getSectionComponents(
         widget.panelSerial,
         widget.sectionName,
@@ -71,7 +79,6 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
       });
     }
 
-    // 2. Fetch from Cloud (Azure SQL) - Required for Web and Shared Mobile
     try {
       final cloudData = await AzureService.fetchSectionData(widget.panelSerial, widget.sectionName);
       if (cloudData.isNotEmpty) {
@@ -105,10 +112,8 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
     }
 
     if (kIsWeb) {
-      // Direct Sync for Web
       await _syncAllToCloud();
     } else {
-      // Local Save for Mobile
       await DBHelper.insertComponent(
         widget.panelSerial, 
         widget.sectionName, 
@@ -122,7 +127,6 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
       );
     }
     
-    // Auto-focus logic
     int currentIndex = components.indexOf(component);
     if (currentIndex < components.length - 1) {
       focusNodes[components[currentIndex + 1]]?.requestFocus();
@@ -134,11 +138,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   Future<void> _syncAllToCloud() async {
     setState(() => isLoading = true);
     try {
-      // Prepare components for the full panel sync (Required by your backend logic)
       List<Map<String, dynamic>> allComponentsToUpload = [];
-      
-      // We need to fetch all sections or just the current data we have
-      // For simplicity in the "Save" context, we send what's on screen
       for (var comp in components) {
         if (serialValues[comp] != null && serialValues[comp]!.isNotEmpty) {
           allComponentsToUpload.add({
@@ -151,10 +151,9 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
       }
 
       if (kIsWeb) {
-        // On Web, we send a "Full Sync" request with the data we have
         await AzureService.syncFullPanel(
           widget.panelSerial,
-          panelData: {"panel_serial": widget.panelSerial}, // Minimum required
+          panelData: {"panel_serial": widget.panelSerial, "product_type": widget.productType},
           components: allComponentsToUpload,
         );
       } else {
@@ -173,7 +172,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.sectionName),
+        title: Text("${widget.sectionName} (${widget.productType})"),
         actions: [
           if (isLoading)
             const Padding(
