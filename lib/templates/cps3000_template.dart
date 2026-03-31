@@ -141,10 +141,10 @@ class CPS3000Template {
       "TS2 – 120°C",
       "CD1-8",
       "NTC1 – 10K",
-      "SKYPER1",
-      "SKYPER2",
-      "SKYPER3",
-      "SKYPER4"
+      "SKYPER1-U1",
+      "SKYPER2-U1",
+      "SKYPER3-U1",
+      "SKYPER4-U1"
     ],
 
     "V1 STACK": [
@@ -158,10 +158,10 @@ class CPS3000Template {
       "TS4 – 120°C",
       "CD9-16",
       "NTC2 – 10K",
-      "SKYPER1",
-      "SKYPER2",
-      "SKYPER3",
-      "SKYPER4"
+      "SKYPER1-V1",
+      "SKYPER2-V1",
+      "SKYPER3-V1",
+      "SKYPER4-V1"
     ],
 
     "W1 STACK": [
@@ -175,10 +175,10 @@ class CPS3000Template {
       "TS6 – 120°C",
       "CD17-24",
       "NTC3 – 10K",
-      "SKYPER1",
-      "SKYPER2",
-      "SKYPER3",
-      "SKYPER4"
+      "SKYPER1-W1",
+      "SKYPER2-W1",
+      "SKYPER3-W1",
+      "SKYPER4-W1"
     ],
 
     "U2 STACK": [
@@ -192,10 +192,10 @@ class CPS3000Template {
       "TS8 – 120°C",
       "CD25-32",
       "NTC4 – 10K",
-      "SKYPER1",
-      "SKYPER2",
-      "SKYPER3",
-      "SKYPER4"
+      "SKYPER1-U2",
+      "SKYPER2-U2",
+      "SKYPER3-U2",
+      "SKYPER4-U2"
     ],
 
     "V2 STACK": [
@@ -209,10 +209,10 @@ class CPS3000Template {
       "TS10 – 120°C",
       "CD33-40",
       "NTC5 – 10K",
-      "SKYPER1",
-      "SKYPER2",
-      "SKYPER3",
-      "SKYPER4"
+      "SKYPER1-V2",
+      "SKYPER2-V2",
+      "SKYPER3-V2",
+      "SKYPER4-V2"
     ],
 
     "W2 STACK": [
@@ -226,10 +226,10 @@ class CPS3000Template {
       "TS12 – 120°C",
       "CD41-48",
       "NTC6 – 10K",
-      "SKYPER1",
-      "SKYPER2",
-      "SKYPER3",
-      "SKYPER4"
+      "SKYPER1-W2",
+      "SKYPER2-W2",
+      "SKYPER3-W2",
+      "SKYPER4-W2"
     ],
 
   };
