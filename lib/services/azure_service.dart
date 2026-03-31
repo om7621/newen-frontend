@@ -13,15 +13,19 @@ class AzureService {
 
   /// Smart Auto-Sync for Mobile
   static Future<void> performIncrementalSync() async {
-    if (kIsWeb) return; // Web uses direct sync on save
+    if (kIsWeb) return; 
     try {
       final unsyncedPanels = await DBHelper.getUnsyncedPanels();
       final unsyncedComponents = await DBHelper.getUnsyncedComponents();
       if (unsyncedPanels.isEmpty && unsyncedComponents.isEmpty) return;
 
       Set<String> panelsToSync = {};
-      for (var p in unsyncedPanels) panelsToSync.add(p['panel_serial']);
-      for (var c in unsyncedComponents) panelsToSync.add(c['panel']);
+      for (var p in unsyncedPanels) {
+        if (p['panel_serial'] != null) panelsToSync.add(p['panel_serial']);
+      }
+      for (var c in unsyncedComponents) {
+        if (c['panel'] != null) panelsToSync.add(c['panel']);
+      }
 
       for (var serial in panelsToSync) {
         await syncFullPanel(serial);
@@ -31,19 +35,16 @@ class AzureService {
     }
   }
 
-  /// Pushes everything for a panel to Azure.
-  /// Works for both Mobile (local DB) and Web (direct data).
+  /// Syncs everything for a panel. Optimized for immediate UI feedback.
   static Future<void> syncFullPanel(String panelSerial, {Map<String, dynamic>? panelData, List<Map<String, dynamic>>? components}) async {
     try {
       Map<String, dynamic> finalPanel;
       List<Map<String, dynamic>> finalComponents;
 
       if (kIsWeb && panelData != null && components != null) {
-        // Direct sync for Web
         finalPanel = panelData;
         finalComponents = components;
       } else {
-        // Fetch from Local DB (Mobile)
         final db = await DBHelper.database;
         final panelList = await db.query("panels", where: "panel_serial = ?", whereArgs: [panelSerial]);
         if (panelList.isEmpty) return;
@@ -58,6 +59,8 @@ class AzureService {
         }).toList();
       }
 
+      if (!finalPanel.containsKey('status')) finalPanel['status'] = "IN_PROGRESS";
+
       final response = await http.post(
         Uri.parse("$baseUrl/sync_full_panel"),
         headers: _headers,
@@ -65,16 +68,17 @@ class AzureService {
           "panel": finalPanel,
           "components": finalComponents,
         }),
-      ).timeout(const Duration(seconds: 20));
+      ).timeout(const Duration(seconds: 15));
 
-      if (response.statusCode == 200 && !kIsWeb) {
-        await DBHelper.markPanelSynced(panelSerial);
-        // Mark all local components as synced
-        final db = await DBHelper.database;
-        await db.update("components", {"is_synced": 1}, where: "panel = ?", whereArgs: [panelSerial]);
+      if (response.statusCode == 200) {
+        if (!kIsWeb) {
+          await DBHelper.markPanelSynced(panelSerial);
+          final db = await DBHelper.database;
+          await db.update("components", {"is_synced": 1}, where: "panel = ?", whereArgs: [panelSerial]);
+        }
       }
     } catch (e) {
-      print("Sync Error: $e");
+      print("Sync Error for $panelSerial: $e");
     }
   }
 
@@ -92,12 +96,11 @@ class AzureService {
 
   static Future<Map<String, dynamic>> fetchSectionData(String panelSerial, String sectionName) async {
     try {
-      // Encode URL parameters correctly for Web Browsers
-      final queryParams = {
+      // Improved URL encoding for Web compatibility
+      final uri = Uri.parse("$baseUrl/get_section_data").replace(queryParameters: {
         'panel': panelSerial,
         'section': sectionName,
-      };
-      final uri = Uri.parse("$baseUrl/get_section_data").replace(queryParameters: queryParams);
+      });
       
       final response = await http.get(uri, headers: _headers);
       if (response.statusCode == 200) {
@@ -107,10 +110,5 @@ class AzureService {
     } catch (e) {
       return {};
     }
-  }
-
-  // Helper for direct sync if needed (Legacy Support)
-  static Future<void> syncSection(String panelSerial, String sectionName, List<Map<String, dynamic>> data) async {
-    await syncFullPanel(panelSerial);
   }
 }
