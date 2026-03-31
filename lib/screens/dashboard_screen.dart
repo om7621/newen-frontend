@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'create_panel_screen.dart';
 import 'panel_list_screen.dart';
+import 'master_report_screen.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -39,7 +40,7 @@ class DashboardScreen extends StatelessWidget {
                 label: const Text("Create New Panel"),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             // CONTINUE PANEL
             SizedBox(
               width: 250,
@@ -54,6 +55,26 @@ class DashboardScreen extends StatelessWidget {
                   );
                 },
                 label: const Text("Continue Panel"),
+              ),
+            ),
+            const SizedBox(height: 15),
+            // MASTER REPORT
+            SizedBox(
+              width: 250,
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.table_chart),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade50,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MasterReportScreen(),
+                    ),
+                  );
+                },
+                label: const Text("Master Excel Report"),
               ),
             ),
             const SizedBox(height: 40),
