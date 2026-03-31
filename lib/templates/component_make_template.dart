@@ -5,13 +5,16 @@ class ComponentMakeTemplate {
     //Enclosure
     "Enclosure Serial No. 1": ["RITTAL"],
     "Enclosure Serial No. 2": ["RITTAL"],
+    "Enclosure Serial No / Rev No": ["TRISHOOLIN", "OTHER"],
 
     // FAN BOX
     "Fan1": ["DELTA", "FANSTECH", "HICOOL"],
     "Fan2": ["DELTA", "FANSTECH", "HICOOL"],
+    "Pan1": ["DELTA", "FANSTECH", "HICOOL"],
 
-    "NTC8 – Fan1 – 10K": ["HONEYWELL"],
+    "NTC8 – Fan1 – 10K": ["HONEYWELL", "VISHAY"],
     "NTC10 – Fan2 – 10K": ["HONEYWELL"],
+    "NTC8 – Fan – 10K": ["HONEYWELL", "VISHAY"],
 
     // MAGNETICS
     "L1": ["SALZER", "CSE"],
@@ -19,6 +22,9 @@ class ComponentMakeTemplate {
     "TR2": ["SALZER", "CSE"],
     "L2": ["SALZER", "CSE"],
     "TR3": ["SALZER", "CSE"],
+    "L1 (480uH/633A) - 1": ["SALZER", "CSE"],
+    "L1 (480uH/633A) - 2": ["SALZER", "CSE"],
+    "TV": ["SALZER", "CSE"],
 
 
     // SWITCHGEAR
@@ -34,6 +40,19 @@ class ComponentMakeTemplate {
     "K7": ["HIITIO", "GIGAVAC"],
     "K8": ["HIITIO", "GIGAVAC"],
 
+    "T1A": ["HIITIO", "GIGAVAC"],
+    "T1B": ["HIITIO", "GIGAVAC"],
+    "T2A": ["HONGFA", "GIGAVAC"],
+    "T2B": ["HIITIO", "GIGAVAC"],
+    "T3A": ["HIITIO", "GIGAVAC"],
+    "T6A": ["HONGFA", "GIGAVAC"],
+    "T6B": ["HIITIO", "GIGAVAC"],
+    "T3": ["HIITIO", "GIGAVAC"],
+    "T4": ["HIITIO", "GIGAVAC"],
+    "T5": ["HIITIO", "GIGAVAC"],
+    "T7": ["HIITIO", "GIGAVAC"],
+    "T8": ["HIITIO", "GIGAVAC"],
+
     "SPD3 – AC SPD": ["CITEL", "PHOENIX"],
     "SPD4 – AC SPD AUX": ["CITEL", "PHOENIX"],
     "SPD1 – DC SPD": ["CITEL", "PHOENIX"],
@@ -44,7 +63,13 @@ class ComponentMakeTemplate {
     "FU3": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
     "FU4": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
 
+    "FU1 (1500VDC)": ["HOLLYLAND", "HIITIO", "LITTLEFUSE", "EATON"],
+    "FU2 (1500VDC)": ["HOLLYLAND", "HIITIO", "LITTLEFUSE", "EATON"],
+    "FU4 (1250A 1500VDC)": ["HOLLYLAND", "HIITIO", "LITTLEFUSE", "EATON"],
+    "FU8 (1250A 1500VDC)": ["HOLLYLAND", "HIITIO", "LITTLEFUSE", "EATON"],
+
     "ETH2 – ETH SWITCH": ["PHOENIX"],
+    "QF1": ["CHINT", "ABB"],
 
     "CBF": ["SCHNEIDER"],
     "CBF1": ["SCHNEIDER"],
@@ -67,6 +92,12 @@ class ComponentMakeTemplate {
 
     "HCTD1": ["LEM", "TAMURA", "SINOMAGS"],
     "HCTD2": ["LEM", "TAMURA", "SINOMAGS"],
+
+    "HALL1": ["LEM", "TAMURA", "SINOMAGS"],
+    "HALL2": ["LEM", "TAMURA", "SINOMAGS"],
+    "HALL3": ["LEM", "TAMURA", "SINOMAGS"],
+    "HALL4": ["LEM", "TAMURA", "SINOMAGS"],
+    "HALL5": ["LEM", "TAMURA", "SINOMAGS"],
 
     // NTC
     "NTC7 – P1 – 10K": ["HONEYWELL"],
@@ -92,6 +123,23 @@ class ComponentMakeTemplate {
     "RA16 – 66KΩ 100W": ["KWK", "RAATRONICS"],
     "RA17 – 66KΩ 100W": ["KWK", "RAATRONICS"],
 
+    "RS1 (HEATER)": ["FINDER"],
+    "HU1 (HUMIDISTAT)": ["FINDER"],
+    "KT1": ["HONEYWELL"],
+    "KT2": ["HONEYWELL"],
+    "KT3": ["HONEYWELL"],
+    "KT4": ["HONEYWELL"],
+    "KT5": ["HONEYWELL"],
+    "KT6": ["HONEYWELL"],
+    "KT7": ["HONEYWELL"],
+    "KT8": ["HONEYWELL"],
+    "KT9": ["HONEYWELL"],
+    "R1-R2 100E/150W": ["KWK", "RAATRONICS"],
+    "R3-R14 7.5K/60W": ["KWK", "RAATRONICS"],
+    "R15-10E/2W": ["KWK", "RAATRONICS"],
+    "R16-100E/150W": ["KWK", "RAATRONICS"],
+    "R17-100E/150W": ["KWK", "RAATRONICS"],
+
 
     // CAPACITORS
     "Cap Bank CF1": ["FARATRONIC", "TDK", "JIANGHAI"],
@@ -100,6 +148,8 @@ class ComponentMakeTemplate {
     "Cap Bank CF4": ["FARATRONIC", "TDK", "JIANGHAI"],
     "Cap Bank CF5": ["FARATRONIC", "TDK", "JIANGHAI"],
     "Cap Bank CF6": ["FARATRONIC", "TDK", "JIANGHAI"],
+    "C1-C12": ["JIANGHAI", "TDK", "FARATRONICS", "CG ELECTRIC"],
+    "C13-C24": ["JIANGHAI", "TDK", "FARATRONICS", "CG ELECTRIC"],
 
 
     // POWER SUPPLY
@@ -139,6 +189,25 @@ class ComponentMakeTemplate {
     "A11 Data Logger": ['NEWEN-V','NEWEN-A'],
     "A13-2 DC Filter": ['NEWEN-V','NEWEN-A'],
 
+    "Controller (NI Board)": ["DYNAPOWER"],
+    "DPS A1 - Interface Board": ["NEWEN-V","NEWEN-A"],
+    "DPS A2 - Power Supply Board - 24VDC": ["NEWEN-V","NEWEN-A"],
+    "DPS A3 - Power Supply Board - 15VDC": ["NEWEN-V","NEWEN-A"],
+    "DPS A3-1 Power Supply Board - 15VDC": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Driver Board A4": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Driver Board A5": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Driver Board A6": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Driver Board A7": ["NEWEN-V","NEWEN-A"],
+    "DPS A12 Fan Controller Board": ["NEWEN-V","NEWEN-A"],
+    "DPS A13 Signal Detection and Power Transfer Board": ["NEWEN-V","NEWEN-A"],
+    "DPS A14 Contactor Power Board": ["NEWEN-V","NEWEN-A"],
+
+    "DPS Filter Board FL1": ["NEWEN-V","NEWEN-A"],
+    "DPS Filter Board FL2": ["NEWEN-V","NEWEN-A"],
+    "DPS Filter Board FL3": ["NEWEN-V","NEWEN-A"],
+    "DPS Filter Board FL4": ["NEWEN-V","NEWEN-A"],
+    "FILTER-5": ["SCHURTER"],
+
     // IGBT STACK ASSEMBLY
     "A4-1": ["NEWEN-V","NEWEN-A"],
     "A4-2": ["NEWEN-V","NEWEN-A"],
@@ -152,6 +221,19 @@ class ComponentMakeTemplate {
     "A4-10": ["NEWEN-V","NEWEN-A"],
     "A4-11": ["NEWEN-V","NEWEN-A"],
     "A4-12": ["NEWEN-V","NEWEN-A"],
+
+    "DPS IGBT Adaptor Board A8A-S1": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A8B-S1": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A8C-S1": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A9A-S2": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A9B-S2": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A9C-S2": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A10A-S3": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A10B-S3": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A10C-S3": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A11A-S4": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A11B-S4": ["NEWEN-V","NEWEN-A"],
+    "DPS IGBT Adaptor Board A11C-S4": ["NEWEN-V","NEWEN-A"],
 
     "IGBT1": ["SEMIKRON"],
     "IGBT2": ["SEMIKRON"],
@@ -178,6 +260,19 @@ class ComponentMakeTemplate {
     "IGBT23": ["SEMIKRON"],
     "IGBT24": ["SEMIKRON"],
 
+    "(IGBT) Q1-A-S1": ["SEMIKRON"],
+    "(IGBT) Q1-B-S1": ["SEMIKRON"],
+    "(IGBT) Q1-C-S1": ["SEMIKRON"],
+    "(IGBT) Q2-A-S2": ["SEMIKRON"],
+    "(IGBT) Q2-B-S2": ["SEMIKRON"],
+    "(IGBT) Q2-C-S2": ["SEMIKRON"],
+    "(IGBT) Q3-A-S3": ["SEMIKRON"],
+    "(IGBT) Q3-B-S3": ["SEMIKRON"],
+    "(IGBT) Q3-C-S3": ["SEMIKRON"],
+    "(IGBT) Q4-A-S4": ["SEMIKRON"],
+    "(IGBT) Q4-B-S4": ["SEMIKRON"],
+    "(IGBT) Q4-C-S4": ["SEMIKRON"],
+
     "TS1 – 120°C": ["HONEYWELL"],
     "TS2 – 120°C": ["HONEYWELL"],
     "TS3 – 120°C": ["HONEYWELL"],
@@ -202,6 +297,35 @@ class ComponentMakeTemplate {
     "SKYPER2": ["SEMIKRON"],
     "SKYPER3": ["SEMIKRON"],
     "SKYPER4": ["SEMIKRON"],
+    "SKYPER1-U1": ["SEMIKRON"],
+    "SKYPER2-U1": ["SEMIKRON"],
+    "SKYPER3-U1": ["SEMIKRON"],
+    "SKYPER4-U1": ["SEMIKRON"],
+    "SKYPER1-V1": ["SEMIKRON"],
+    "SKYPER2-V1": ["SEMIKRON"],
+    "SKYPER3-V1": ["SEMIKRON"],
+    "SKYPER4-V1": ["SEMIKRON"],
+    "SKYPER1-W1": ["SEMIKRON"],
+    "SKYPER2-W1": ["SEMIKRON"],
+    "SKYPER3-W1": ["SEMIKRON"],
+    "SKYPER4-W1": ["SEMIKRON"],
+    "SKYPER1-U2": ["SEMIKRON"],
+    "SKYPER2-U2": ["SEMIKRON"],
+    "SKYPER3-U2": ["SEMIKRON"],
+    "SKYPER4-U2": ["SEMIKRON"],
+    "SKYPER1-V2": ["SEMIKRON"],
+    "SKYPER2-V2": ["SEMIKRON"],
+    "SKYPER3-V2": ["SEMIKRON"],
+    "SKYPER4-V2": ["SEMIKRON"],
+    "SKYPER1-W2": ["SEMIKRON"],
+    "SKYPER2-W2": ["SEMIKRON"],
+    "SKYPER3-W2": ["SEMIKRON"],
+    "SKYPER4-W2": ["SEMIKRON"],
+
+    "SKYPER 1-S1": ["SEMIKRON"],
+    "SKYPER 2-S2": ["SEMIKRON"],
+    "SKYPER 3-S3": ["SEMIKRON"],
+    "SKYPER 4-S4": ["SEMIKRON"],
 
     "CD1-8": ["Faratronic", "Tdk"],
     "CD9-16": ["Faratronic", "Tdk"],
