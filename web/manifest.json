@@ -1,11 +1,11 @@
 {
-    "name": "newen_traceability",
-    "short_name": "newen_traceability",
+    "name": "Newen Traceability System",
+    "short_name": "Newen",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#ffffff",
+    "theme_color": "#1B5E20",
+    "description": "Digital Traceability System for Newen Energy Solutions.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
