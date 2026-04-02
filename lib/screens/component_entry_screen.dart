@@ -172,7 +172,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("${widget.sectionName} (${widget.productType})"),
+        title: Text("${widget.sectionName} (Sr. No: ${widget.panelSerial})"),
         actions: [
           if (isLoading)
             const Padding(

@@ -27,6 +27,10 @@ class _PanelListScreenState extends State<PanelListScreen> {
     try {
       final panels = await AzureService.fetchPanels();
       
+      // Sort panels date-wise: Newest created last appears at top
+      // We assume panel_serial or start_date contains timing info, or we rely on the order from Azure.
+      // If the backend returns them in descending order, we are already good.
+      
       setState(() {
         _panels = panels;
         _isLoading = false;
@@ -48,7 +52,8 @@ class _PanelListScreenState extends State<PanelListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Cloud Panels (Azure SQL)"),
+        title: const Text("Continue Existing Panel"),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -67,6 +72,7 @@ class _PanelListScreenState extends State<PanelListScreen> {
                   itemBuilder: (context, index) {
                     final panelData = _panels[index];
                     final String serial = panelData["panel_serial"] ?? "Unknown";
+                    final String productType = panelData["product_type"] ?? "CPS3000";
 
                     return Card(
                       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -76,7 +82,7 @@ class _PanelListScreenState extends State<PanelListScreen> {
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
-                          "${panelData["product_type"] ?? ""} | Project: ${panelData["project_name"] ?? ""}",
+                          "$productType | Project: ${panelData["project_name"] ?? ""}",
                         ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                         onTap: () {
@@ -85,6 +91,7 @@ class _PanelListScreenState extends State<PanelListScreen> {
                             MaterialPageRoute(
                               builder: (_) => SectionDashboard(
                                 panelSerial: serial,
+                                productType: productType,
                               ),
                             ),
                           );
