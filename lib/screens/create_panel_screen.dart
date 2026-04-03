@@ -28,15 +28,19 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
   List<String> projectList = ["Standard Project"];
   List<String> verifierList = ["Supervisor 1"];
 
+  final Color primaryGreen = const Color(0xFF1B5E20);
+  final Color backgroundGreen = Colors.green.shade50;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: backgroundGreen,
       appBar: AppBar(
-        title: const Text("New Assembly Setup"),
+        title: const Text("New Assembly Setup", style: TextStyle(fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        backgroundColor: backgroundGreen,
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        foregroundColor: Colors.black87,
       ),
       body: Stack(
         children: [
@@ -46,59 +50,59 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildSectionTitle("Basic Information"),
-                _buildCard([
+                _buildFormCard([
                   _buildTextField(
                     controller: workOrderController,
                     label: "Work Order No.",
-                    icon: Icons.assignment,
+                    icon: Icons.assignment_outlined,
                   ),
-                  const Divider(height: 1),
+                  const Divider(height: 1, indent: 50),
                   _buildTextField(
                     controller: panelSerialController,
                     label: "Panel Serial Number",
-                    icon: Icons.qr_code,
+                    icon: Icons.qr_code_rounded,
                   ),
-                  const Divider(height: 1),
+                  const Divider(height: 1, indent: 50),
                   _buildDropdown(
                     label: "Product Type",
                     value: productType,
                     items: ["CPS3000", "DPS"],
                     onChanged: (v) => setState(() => productType = v!),
-                    icon: Icons.category,
+                    icon: Icons.category_outlined,
                   ),
                 ]),
                 const SizedBox(height: 24),
                 _buildSectionTitle("Project Details"),
-                _buildCard([
+                _buildFormCard([
                   _buildDropdownWithAdd(
                     label: "Project Name",
                     value: projectName,
                     items: projectList,
                     onChanged: (v) => setState(() => projectName = v),
                     onAdd: addProjectDialog,
-                    icon: Icons.business,
+                    icon: Icons.business_outlined,
                   ),
-                  const Divider(height: 1),
+                  const Divider(height: 1, indent: 50),
                   _buildTextField(
                     controller: referenceDocController,
                     label: "Reference Document",
-                    icon: Icons.description,
+                    icon: Icons.description_outlined,
                   ),
-                  const Divider(height: 1),
+                  const Divider(height: 1, indent: 50),
                   _buildDatePicker(),
                 ]),
                 const SizedBox(height: 24),
                 _buildSectionTitle("Personnel"),
-                _buildCard([
+                _buildFormCard([
                   _buildDropdownWithAdd(
                     label: "Prepared By",
                     value: preparedBy,
                     items: workersList,
                     onChanged: (v) => setState(() => preparedBy = v),
                     onAdd: addWorkerDialog,
-                    icon: Icons.person_outline,
+                    icon: Icons.person_outline_rounded,
                   ),
-                  const Divider(height: 1),
+                  const Divider(height: 1, indent: 50),
                   _buildDropdownWithAdd(
                     label: "Verified By",
                     value: verifiedBy,
@@ -110,7 +114,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
                 ]),
                 const SizedBox(height: 24),
                 _buildSectionTitle("Other"),
-                _buildCard([
+                _buildFormCard([
                   _buildTextField(
                     controller: remarksController,
                     label: "Remarks",
@@ -119,37 +123,42 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
                   ),
                 ]),
                 const SizedBox(height: 40),
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1B5E20),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      elevation: 2,
+                Center(
+                  child: Container(
+                    width: double.infinity,
+                    constraints: const BoxConstraints(maxWidth: 400),
+                    height: 56,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryGreen,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                        shadowColor: primaryGreen.withOpacity(0.3),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      ),
+                      onPressed: isCreating ? null : _handleStartAssembly,
+                      child: isCreating 
+                        ? const SizedBox(
+                            height: 24, 
+                            width: 24, 
+                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                          )
+                        : const Text(
+                            "START ASSEMBLY",
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                          ),
                     ),
-                    onPressed: isCreating ? null : _handleStartAssembly,
-                    child: isCreating 
-                      ? const SizedBox(
-                          height: 24, 
-                          width: 24, 
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                        )
-                      : const Text(
-                          "START ASSEMBLY",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
-                        ),
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
               ],
             ),
           ),
           if (isCreating)
-            const Positioned.fill(
-              child: Center(
-                child: CircularProgressIndicator(),
+            Positioned.fill(
+              child: Container(
+                color: Colors.white.withOpacity(0.5),
+                child: const Center(child: CircularProgressIndicator()),
               ),
             ),
         ],
@@ -159,25 +168,32 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
 
   Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      padding: const EdgeInsets.only(left: 8, bottom: 8),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.bold,
-          color: Colors.grey[600],
+          color: primaryGreen.withOpacity(0.7),
           letterSpacing: 1.2,
         ),
       ),
     );
   }
 
-  Widget _buildCard(List<Widget> children) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey[200]!),
+  Widget _buildFormCard(List<Widget> children) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.green.shade100, width: 1),
       ),
       child: Column(children: children),
     );
@@ -195,7 +211,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
         controller: controller,
         maxLines: maxLines,
         decoration: InputDecoration(
-          icon: Icon(icon, size: 20, color: Colors.green[700]),
+          icon: Icon(icon, size: 22, color: primaryGreen),
           labelText: label,
           border: InputBorder.none,
           labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
@@ -216,7 +232,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
       child: DropdownButtonFormField<String>(
         value: value,
         decoration: InputDecoration(
-          icon: Icon(icon, size: 20, color: Colors.green[700]),
+          icon: Icon(icon, size: 22, color: primaryGreen),
           labelText: label,
           border: InputBorder.none,
           labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
@@ -243,7 +259,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
             child: DropdownButtonFormField<String>(
               value: value,
               decoration: InputDecoration(
-                icon: Icon(icon, size: 20, color: Colors.green[700]),
+                icon: Icon(icon, size: 22, color: primaryGreen),
                 labelText: label,
                 border: InputBorder.none,
                 labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
@@ -253,8 +269,8 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.add_circle_outline, size: 22),
-            color: Colors.green[700],
+            icon: const Icon(Icons.add_circle_outline, size: 24),
+            color: primaryGreen,
             onPressed: onAdd,
           ),
         ],
@@ -265,11 +281,11 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
   Widget _buildDatePicker() {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-      leading: Icon(Icons.calendar_today, size: 20, color: Colors.green[700]),
+      leading: Icon(Icons.calendar_today_outlined, size: 22, color: primaryGreen),
       title: Text(
         startDate == null ? "Select Start Date" : startDate.toString().split(" ")[0],
         style: TextStyle(
-          color: startDate == null ? Colors.grey[600] : Colors.black,
+          color: startDate == null ? Colors.grey[600] : Colors.black87,
           fontSize: 14,
         ),
       ),
@@ -311,7 +327,6 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
       };
 
       if (!kIsWeb) {
-        // Save locally only on Mobile
         await DBHelper.insertPanel(
           serial,
           productType,
@@ -325,8 +340,6 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
         );
       }
 
-      // Sync to cloud
-      // On Web, we pass the data directly to avoid hitting SQLite
       await AzureService.syncFullPanel(
         serial, 
         panelData: kIsWeb ? panelData : null,
@@ -358,11 +371,19 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(title),
-        content: TextField(controller: controller, decoration: InputDecoration(labelText: label)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Text(title, style: TextStyle(color: primaryGreen, fontWeight: FontWeight.bold)),
+        content: TextField(
+          controller: controller, 
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+          )
+        ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL")),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: primaryGreen, foregroundColor: Colors.white),
             onPressed: () {
               if (controller.text.isNotEmpty) {
                 setState(() => list.add(controller.text));

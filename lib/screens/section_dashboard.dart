@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'component_entry_screen.dart';
 import 'panel_qr_screen.dart';
 import '../services/excel_service.dart';
 import '../templates/cps3000_template.dart';
 import '../templates/dps_template.dart';
+// Use dynamic import to prevent mobile build errors
+import 'dart:js' as js;
 
 class SectionDashboard extends StatelessWidget {
   final String panelSerial;
@@ -17,17 +20,22 @@ class SectionDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine sections based on product type
+    final Color backgroundGreen = Colors.green.shade50;
+    
     final List<String> sections = (productType == "DPS")
         ? DPSTemplate.sections.keys.toList()
         : CPS3000Template.sections.keys.toList();
 
     return Scaffold(
+      backgroundColor: backgroundGreen,
       appBar: AppBar(
+        backgroundColor: backgroundGreen,
+        elevation: 0,
+        foregroundColor: Colors.black87,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Panel: $panelSerial", style: const TextStyle(fontSize: 18)),
+            Text("Panel: $panelSerial", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text("Model: $productType", style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
@@ -36,13 +44,23 @@ class SectionDashboard extends StatelessWidget {
         children: [
           Expanded(
             child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 10),
               itemCount: sections.length,
               itemBuilder: (context, index) {
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
+                    ],
+                    border: Border.all(color: Colors.green.shade100, width: 1),
+                  ),
                   child: ListTile(
-                    title: Text(sections[index]),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+                    title: Text(sections[index], style: const TextStyle(fontWeight: FontWeight.w600)),
+                    trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey.shade400),
                     onTap: () {
                       Navigator.push(
                         context,
@@ -50,7 +68,7 @@ class SectionDashboard extends StatelessWidget {
                           builder: (context) => ComponentEntryScreen(
                             sectionName: sections[index],
                             panelSerial: panelSerial,
-                            productType: productType, // Pass product type
+                            productType: productType,
                           ),
                         ),
                       );
@@ -60,49 +78,76 @@ class SectionDashboard extends StatelessWidget {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(20),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, -5)),
+              ],
+            ),
             child: Column(
               children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.qr_code),
-                    label: const Text("GENERATE PANEL QR"),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => PanelQRScreen(
-                            panelSerial: panelSerial,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                _buildActionButton(
+                  label: "GENERATE PANEL QR",
+                  icon: Icons.qr_code_rounded,
+                  color: Colors.blueGrey.shade700,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PanelQRScreen(panelSerial: panelSerial),
+                      ),
+                    );
+                  },
                 ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    icon: const Icon(Icons.file_download),
-                    label: const Text("EXPORT EXCEL REPORT"),
-                    onPressed: () async {
-                      String path = await ExcelService.exportPanelReport(panelSerial);
+                const SizedBox(height: 12),
+                _buildActionButton(
+                  label: "EXPORT EXCEL REPORT",
+                  icon: Icons.file_download_outlined,
+                  color: const Color(0xFF1B5E20),
+                  onTap: () async {
+                    String result = await ExcelService.exportPanelReport(panelSerial);
+                    
+                    if (kIsWeb && result.startsWith("WEB_DOWNLOAD:")) {
+                      final url = result.split("WEB_DOWNLOAD:")[1];
+                      // Use dart:js to open URL on web safely
+                      js.context.callMethod('open', [url, '_blank']);
+                    } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(path.startsWith("WEB_DOWNLOAD") 
-                              ? "Download started..." 
-                              : "Excel saved at: $path"),
-                        ),
+                        SnackBar(content: Text("Excel saved at: $result")),
                       );
-                    },
-                  ),
+                    }
+                  },
                 ),
               ],
             ),
           )
         ],
+      ),
+    );
+  }
+
+  Widget _buildActionButton({
+    required String label,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: ElevatedButton.icon(
+        icon: Icon(icon, size: 20),
+        label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+        onPressed: onTap,
       ),
     );
   }
