@@ -8,18 +8,18 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Professional Light Green Background
-    final Color backgroundColor = Colors.green.shade50; 
+    final Color backgroundColor = Colors.green.shade50;
+    final Color primaryGreen = const Color(0xFF1B5E20);
 
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
         title: const Text(
           "Newen Traceability System",
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.8),
         ),
         centerTitle: true,
-        backgroundColor: backgroundColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black87,
       ),
@@ -37,59 +37,60 @@ class DashboardScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 20),
-                        // Brand Identity with elevated container
+                        // Brand Identity with sophisticated shadow
                         Container(
-                          padding: const EdgeInsets.all(20),
+                          padding: const EdgeInsets.all(25),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.green.withOpacity(0.1),
-                                blurRadius: 20,
-                                offset: const Offset(0, 10),
+                                color: primaryGreen.withOpacity(0.12),
+                                blurRadius: 30,
+                                offset: const Offset(0, 15),
                               ),
                             ],
                           ),
                           child: SizedBox(
-                            height: 120,
+                            height: 110,
                             child: Image.asset(
                               "assets/logo/newen_logo.png",
                               fit: BoxFit.contain,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 50),
+                        const SizedBox(height: 60),
                         
-                        // Main Actions - Pure White Tiles for contrast
                         _buildMenuButton(
                           context,
                           title: "Create New Panel",
-                          icon: Icons.add_circle_outline_rounded,
-                          color: const Color(0xFF1B5E20),
+                          subtitle: "Setup a new assembly project",
+                          icon: Icons.add_rounded,
+                          color: primaryGreen,
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const CreatePanelScreen()),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         _buildMenuButton(
                           context,
                           title: "Continue Panel",
-                          icon: Icons.edit_note_rounded,
+                          subtitle: "Manage existing work in progress",
+                          icon: Icons.inventory_2_outlined,
                           color: Colors.blueGrey.shade700,
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const PanelListScreen()),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         _buildMenuButton(
                           context,
                           title: "Master Excel Report",
-                          icon: Icons.analytics_outlined,
-                          color: Colors.orange.shade800,
+                          subtitle: "Download full database summary",
+                          icon: Icons.description_outlined,
+                          color: Colors.orange.shade900,
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => const MasterReportScreen()),
@@ -103,36 +104,27 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
             
-            // Refined Footer
+            // Refined Minimalist Footer
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 25),
+              padding: const EdgeInsets.only(bottom: 30),
               child: Column(
                 children: [
-                  Container(
-                    width: 40,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade100,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  const SizedBox(height: 15),
                   const Text(
                     "Newen System Pvt. Ltd. © 2026",
                     style: TextStyle(
-                      color: Colors.black54,
+                      color: Colors.black45,
                       fontWeight: FontWeight.w600,
-                      fontSize: 13,
-                      letterSpacing: 0.3,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   const Text(
                     "All Rights are Reserved",
                     style: TextStyle(
                       color: Colors.grey,
-                      fontSize: 11,
-                      letterSpacing: 0.5,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
                     ),
                   ),
                 ],
@@ -147,61 +139,73 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildMenuButton(
     BuildContext context, {
     required String title,
+    required String subtitle,
     required IconData icon,
     required Color color,
     required VoidCallback onTap,
   }) {
     return Container(
       width: double.infinity,
-      constraints: const BoxConstraints(maxWidth: 320),
-      child: Container( // Shadow wrapper
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.03),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+      constraints: const BoxConstraints(maxWidth: 340),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 15,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          foregroundColor: color,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(color: Colors.green.shade100.withOpacity(0.5), width: 1),
+          ),
         ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white, // Pure white tile
-            foregroundColor: color,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-              side: BorderSide(color: Colors.green.shade100, width: 1.0),
+        onPressed: onTap,
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, size: 26, color: color),
             ),
-          ).copyWith(
-            overlayColor: MaterialStateProperty.all(color.withOpacity(0.05)),
-          ),
-          onPressed: onTap,
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, size: 24),
+            const SizedBox(width: 18),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 15),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
-              const Spacer(),
-              Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.shade400),
-            ],
-          ),
+            ),
+            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: Colors.grey.shade300),
+          ],
         ),
       ),
     );
