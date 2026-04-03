@@ -9,6 +9,7 @@ import 'dart:async';
 
 class ExcelService {
 
+  // Method for exporting a SINGLE panel report
   static Future<String> exportPanelReport(String panelSerial) async {
     if (kIsWeb) {
       final url = "https://newen-tracibility.azurewebsites.net/export_excel?panel=$panelSerial";
@@ -87,9 +88,12 @@ class ExcelService {
     return file.path;
   }
 
+  // Method for exporting the MASTER summary report
   static Future<String> exportFullSummaryReport(String productType) async {
     if (kIsWeb) {
-      final url = "https://newen-tracibility.azurewebsites.net/export_full_summary?product_type=$productType";
+      // Choose the new separate route based on product type
+      String route = (productType == "DPS") ? "export_dps_summary" : "export_cps_summary";
+      final url = "https://newen-tracibility.azurewebsites.net/$route";
       return "WEB_DOWNLOAD:$url";
     }
 
