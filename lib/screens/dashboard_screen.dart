@@ -127,10 +127,10 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
+                  const Text(
                     "All Rights are Reserved",
                     style: TextStyle(
-                      color: Colors.grey.shade500,
+                      color: Colors.grey,
                       fontSize: 11,
                       letterSpacing: 0.5,
                     ),
