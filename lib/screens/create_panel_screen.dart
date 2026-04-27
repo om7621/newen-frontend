@@ -24,9 +24,9 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
   DateTime? startDate;
   bool isCreating = false;
 
-  List<String> workersList = ["Operator 1", "Operator 2"];
-  List<String> projectList = ["Standard Project"];
-  List<String> verifierList = ["Supervisor 1"];
+  List<String> workersList = ["Operator 1", "Operator 2", "Operator 3"];
+  List<String> projectList = ["L&T", "RE+", "ONGC", "Amazon", "Toyota"];
+  List<String> verifierList = ["Supervisor 1", "Supervisor 2", "Supervisor 3"];
 
   final Color primaryGreen = const Color(0xFF1B5E20);
   final Color backgroundGreen = Colors.green.shade50;
@@ -66,7 +66,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
                   _buildDropdown(
                     label: "Product Type",
                     value: productType,
-                    items: ["CPS3000", "DPS"],
+                    items: ["CPS3000", "DPS", "DPS 2500"],
                     onChanged: (v) => setState(() => productType = v!),
                     icon: Icons.category_outlined,
                   ),
@@ -230,7 +230,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: DropdownButtonFormField<String>(
-        value: value,
+        value: items.contains(value) ? value : items.first,
         decoration: InputDecoration(
           icon: Icon(icon, size: 22, color: primaryGreen),
           labelText: label,

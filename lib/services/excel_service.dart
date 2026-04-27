@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../templates/cps3000_template.dart';
 import '../templates/dps_template.dart';
+import '../templates/dps2500_template.dart';
 import '../Database/db_helper.dart';
 import 'dart:async';
 
@@ -61,7 +62,15 @@ class ExcelService {
       dbMap[row["component"]] = row;
     }
 
-    final sections = (productType == "DPS") ? DPSTemplate.sections : CPS3000Template.sections;
+    // Determine sections based on product type
+    Map<String, List<String>> sections;
+    if (productType == "DPS") {
+      sections = DPSTemplate.sections;
+    } else if (productType == "DPS 2500") {
+      sections = DPS2500Template.sections;
+    } else {
+      sections = CPS3000Template.sections;
+    }
 
     sections.forEach((section, components) {
       for (var component in components) {
@@ -92,7 +101,14 @@ class ExcelService {
   static Future<String> exportFullSummaryReport(String productType) async {
     if (kIsWeb) {
       // Choose the new separate route based on product type
-      String route = (productType == "DPS") ? "export_dps_summary" : "export_cps_summary";
+      String route;
+      if (productType == "DPS") {
+        route = "export_dps_summary";
+      } else if (productType == "DPS 2500") {
+        route = "export_dps2500_summary";
+      } else {
+        route = "export_cps_summary";
+      }
       final url = "https://newen-tracibility.azurewebsites.net/$route";
       return "WEB_DOWNLOAD:$url";
     }
@@ -123,7 +139,17 @@ class ExcelService {
     ];
 
     List<String> allComponents = [];
-    final sections = (productType == "DPS") ? DPSTemplate.sections : CPS3000Template.sections;
+    
+    // Determine sections based on product type
+    Map<String, List<String>> sections;
+    if (productType == "DPS") {
+      sections = DPSTemplate.sections;
+    } else if (productType == "DPS 2500") {
+      sections = DPS2500Template.sections;
+    } else {
+      sections = CPS3000Template.sections;
+    }
+
     sections.forEach((section, components) {
       allComponents.addAll(components);
     });
