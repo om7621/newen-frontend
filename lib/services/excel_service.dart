@@ -88,7 +88,7 @@ class ExcelService {
     Directory? dir = await getExternalStorageDirectory();
     if (dir == null) throw Exception("Could not access storage");
     
-    String newPath = dir.path.split("Android")[0] + "Download";
+    String newPath = "${dir.path.split("Android")[0]}Download";
     final file = File("$newPath/traceability_$panelSerial.xlsx");
     file
       ..createSync(recursive: true)
@@ -149,7 +149,7 @@ class ExcelService {
     } else {
       sections = CPS3000Template.sections;
     }
-
+    
     sections.forEach((section, components) {
       allComponents.addAll(components);
     });
@@ -192,8 +192,8 @@ class ExcelService {
 
     Directory? dir = await getExternalStorageDirectory();
     if (dir == null) throw Exception("Could not access storage");
-    String newPath = dir.path.split("Android")[0] + "Download";
-    final file = File("${newPath}/Master_Traceability_${productType}_Report.xlsx");
+    String newPath = "${dir.path.split("Android")[0]}Download";
+    final file = File("$newPath/Master_Traceability_${productType}_Report.xlsx");
     file
       ..createSync(recursive: true)
       ..writeAsBytesSync(excel.encode()!);
