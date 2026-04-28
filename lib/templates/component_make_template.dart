@@ -42,7 +42,10 @@ class ComponentMakeTemplate {
     "K7": ["HIITIO", "GIGAVAC"],
     "K8": ["HIITIO", "GIGAVAC"],
 
-    "KP1 – KP4": ["HONGFA", "GIGAVAC"],
+    "KP1": ["HONGFA", "GIGAVAC"],
+    "KP2": ["HONGFA", "GIGAVAC"],
+    "KP3": ["HONGFA", "GIGAVAC"],
+    "KP4": ["HONGFA", "GIGAVAC"],
 
     "T1A": ["HIITIO", "GIGAVAC"],
     "T1B": ["HIITIO", "GIGAVAC"],
@@ -68,7 +71,15 @@ class ComponentMakeTemplate {
     "FU4": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
     "FU5 – FU7": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
     "FC1 – FU6": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
-    "FU8 – FU26": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU8 – FU9": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU10": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU11 – FU13": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU14 – FU16": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU17 – FU19": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU20 – FU22": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU23 – FU24": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+    "FU25 – FU26": ["HOLLYLAND", "HIITIO", "LITTLEFUSE"],
+
 
     "FU1 (1500VDC)": ["HOLLYLAND", "HIITIO", "LITTLEFUSE", "EATON"],
     "FU2 (1500VDC)": ["HOLLYLAND", "HIITIO", "LITTLEFUSE", "EATON"],
@@ -119,6 +130,8 @@ class ComponentMakeTemplate {
     "RA18 – 66KΩ 100W": ["KWK", "RAATRONICS"],
     "RA19 – 66KΩ 100W": ["KWK", "RAATRONICS"],
     "RA20 – 66KΩ 100W": ["KWK", "RAATRONICS"],
+    "RA21 – 80E 50W": ["KWK", "RAATRONICS"],
+    "RA22 – 80E 50W": ["KWK", "RAATRONICS"],
 
     "RA1 – 80E 500W": ["KWK", "RAATRONICS"],
     "RA2 – 80E 500W": ["KWK", "RAATRONICS"],
@@ -134,8 +147,10 @@ class ComponentMakeTemplate {
 
     "RS1 (HEATER)": ["FINDER"],
     "HU1 (HUMIDISTAT)": ["FINDER"],
-    "RS1, RS2": ["FINDER"],
-    "HU1, HU2": ["FINDER"],
+    "RS1": ["FINDER"],
+    "RS2": ["FINDER"],
+    "HU1": ["FINDER"],
+    "HU2": ["FINDER"],
     "KT1": ["HONEYWELL"],
     "KT2": ["HONEYWELL"],
     "KT3": ["HONEYWELL"],
@@ -155,8 +170,6 @@ class ComponentMakeTemplate {
     "RA9 – RA14 – 100kΩ 50W": ["KWK", "RAATRONICS"],
     "RA15 – RA17 – 60kΩ 50W": ["KWK", "RAATRONICS"],
     "RA18 – RA20 – 60kΩ 50W": ["KWK", "RAATRONICS"],
-    "RA21 – RA22 – 80E 500W": ["KWK", "RAATRONICS"],
-
 
     // CAPACITORS
     "Cap Bank CF1": ["FARATRONIC", "TDK", "JIANGHAI"],
@@ -221,7 +234,12 @@ class ComponentMakeTemplate {
     "A5-1: Power Supply Oring card": ["NEWEN"],
     "A6-1: ACB card": ["NEWEN"],
     "A6-2: ACB card": ["NEWEN"],
-    "A7-1 to A7-6: Gate Interlock cards": ["NEWEN"],
+    "A7-1: Gate Interlock card": ["NEWEN"],
+    "A7-2: Gate Interlock card": ["NEWEN"],
+    "A7-3: Gate Interlock card": ["NEWEN"],
+    "A7-4: Gate Interlock card": ["NEWEN"],
+    "A7-5: Gate Interlock card": ["NEWEN"],
+    "A7-6: Gate Interlock card": ["NEWEN"],
     "A10: SIM 100": ["NEWEN"],
 
     "DPS A1 - Interface Board": ["NEWEN"],
@@ -405,9 +423,14 @@ class ComponentMakeTemplate {
     "CD29 – CD35": ["FARATRONIC", "TDK"],
     "CD36 – CD42": ["FARATRONIC", "TDK"],
 
-    "DIODE D1 – D4": ["IXYS"],
+    "DIODE D1": ["IXYS"],
+    "DIODE D2": ["IXYS"],
+    "DIODE D3": ["IXYS"],
+    "DIODE D4": ["IXYS"],
+
     "DS1, DS2 (Door Switch)": ["HONEYWELL"],
-    "IS01 (ISOMETER & COUPLING)": ["BENDER"]
+    "IS01 ISOMETER": ["BENDER"],
+    "IS01 COUPLING": ["BENDER"]
 
   };
 
