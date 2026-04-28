@@ -5,6 +5,7 @@ import 'panel_qr_screen.dart';
 import '../services/excel_service.dart';
 import '../templates/cps3000_template.dart';
 import '../templates/dps_template.dart';
+import '../templates/dps2500_template.dart';
 // Use dynamic import to prevent mobile build errors
 import 'dart:js' as js;
 
@@ -15,16 +16,22 @@ class SectionDashboard extends StatelessWidget {
   SectionDashboard({
     super.key,
     required this.panelSerial,
-    this.productType = "CPS3000",
+    this.productType = "CPS 3000", // Updated from CPS3000
   });
 
   @override
   Widget build(BuildContext context) {
     final Color backgroundGreen = Colors.green.shade50;
-    
-    final List<String> sections = (productType == "DPS")
-        ? DPSTemplate.sections.keys.toList()
-        : CPS3000Template.sections.keys.toList();
+
+    // Updated Logic: Handle CPS 3000, CPS 2500, and DPS
+    List<String> sections;
+    if (productType == "CPS 2500") {
+      sections = DPS2500Template.sections.keys.toList();
+    } else if (productType == "DPS") {
+      sections = DPSTemplate.sections.keys.toList();
+    } else {
+      sections = CPS3000Template.sections.keys.toList();
+    }
 
     return Scaffold(
       backgroundColor: backgroundGreen,
@@ -109,7 +116,7 @@ class SectionDashboard extends StatelessWidget {
                   color: const Color(0xFF1B5E20),
                   onTap: () async {
                     String result = await ExcelService.exportPanelReport(panelSerial);
-                    
+
                     if (kIsWeb && result.startsWith("WEB_DOWNLOAD:")) {
                       final url = result.split("WEB_DOWNLOAD:")[1];
                       // Use dart:js to open URL on web safely

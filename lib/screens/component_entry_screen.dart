@@ -17,7 +17,7 @@ class ComponentEntryScreen extends StatefulWidget {
     super.key,
     required this.sectionName,
     required this.panelSerial,
-    this.productType = "CPS3000",
+    this.productType = "CPS 3000", // Updated from CPS3000
   });
 
   @override
@@ -30,16 +30,16 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   Map<String, String> makeValues = {};
   Set<String> savedComponents = {};
   bool isLoading = false;
-  
+
   Map<String, TextEditingController> controllers = {};
   Map<String, FocusNode> focusNodes = {};
 
   @override
   void initState() {
     super.initState();
-    
-    // Updated Logic: Correctly switch templates for all 3 product types
-    if (widget.productType == "DPS 2500") {
+
+    // Updated Logic: Handle CPS 3000, CPS 2500 (formerly DPS 2500), and DPS
+    if (widget.productType == "CPS 2500") {
       components = DPS2500Template.sections[widget.sectionName] ?? [];
     } else if (widget.productType == "DPS") {
       components = DPSTemplate.sections[widget.sectionName] ?? [];
@@ -63,7 +63,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
 
   void loadData() async {
     setState(() => isLoading = true);
-    
+
     if (!kIsWeb) {
       final data = await DBHelper.getSectionComponents(
         widget.panelSerial,
@@ -90,7 +90,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
           cloudData.forEach((compName, details) {
             String cloudSerial = details["serial_number"] ?? "";
             String cloudMake = details["make"] ?? "";
-            
+
             if (cloudSerial.isNotEmpty) {
               serialValues[compName] = cloudSerial;
               makeValues[compName] = cloudMake;
@@ -119,18 +119,18 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
       await _syncAllToCloud();
     } else {
       await DBHelper.insertComponent(
-        widget.panelSerial, 
-        widget.sectionName, 
-        component, 
-        serialValues[component] ?? "", 
-        makeValues[component] ?? ""
+          widget.panelSerial,
+          widget.sectionName,
+          component,
+          serialValues[component] ?? "",
+          makeValues[component] ?? ""
       );
       setState(() => savedComponents.add(component));
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("$component Saved Locally"), duration: const Duration(milliseconds: 500)),
       );
     }
-    
+
     int currentIndex = components.indexOf(component);
     if (currentIndex < components.length - 1) {
       focusNodes[components[currentIndex + 1]]?.requestFocus();
@@ -154,13 +154,12 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
         }
       }
 
-      // Ensure panelData is sent correctly with the right Product Type
       await AzureService.syncFullPanel(
         widget.panelSerial,
         panelData: kIsWeb ? {"panel_serial": widget.panelSerial, "product_type": widget.productType} : null,
         components: kIsWeb ? allComponentsToUpload : null,
       );
-      
+
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Data Synced to Cloud")));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Sync failed: $e")));
@@ -237,7 +236,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
                           controller: controllers[component],
                           focusNode: focusNodes[component],
                           decoration: const InputDecoration(labelText: "Serial Number", border: OutlineInputBorder()),
-                          onSubmitted: (value) => _handleSave(component), 
+                          onSubmitted: (value) => _handleSave(component),
                           onChanged: (v) {
                             serialValues[component] = v;
                             if (savedComponents.contains(component)) {
@@ -269,7 +268,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
                               onPressed: () => _handleSave(component),
                               label: Text(kIsWeb ? "SYNC TO CLOUD" : "SAVE LOCAL"),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green.shade700, 
+                                backgroundColor: Colors.green.shade700,
                                 foregroundColor: Colors.white,
                               ),
                             ),

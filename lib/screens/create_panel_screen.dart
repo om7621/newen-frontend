@@ -17,8 +17,8 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
   final TextEditingController referenceDocController = TextEditingController();
   final TextEditingController remarksController = TextEditingController();
 
-  // MUST match exactly one of the items in availableProductTypes list
-  String productType = "CPS3000"; 
+  // Updated to CPS 3000
+  String productType = "CPS 3000";
   String? preparedBy;
   String? projectName;
   String? verifiedBy;
@@ -29,16 +29,14 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
   List<String> projectList = ["L&T", "RE+", "ONGC", "Amazon", "Toyota"];
   List<String> verifierList = ["Supervisor 1", "Supervisor 2", "Supervisor 3"];
 
-  // Matches your latest requirement
+  // Updated list: Removed "DPS" as requested
   final List<String> availableProductTypes = [
-    "CPS3000", 
-    "CPS 2500", 
-    "CPS 1250", 
-    "DPS", 
-    "DPS 1500", 
-    "DPS 1000", 
+    "CPS 3000",
+    "CPS 2500",
+    "CPS 1250",
+    "DPS 1500",
+    "DPS 1000",
     "DPS 500",
-    "DPS 2500"
   ];
 
   final Color primaryGreen = const Color(0xFF1B5E20);
@@ -144,16 +142,16 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       ),
                       onPressed: isCreating ? null : _handleStartAssembly,
-                      child: isCreating 
-                        ? const SizedBox(
-                            height: 24, 
-                            width: 24, 
-                            child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
-                          )
-                        : const Text(
-                            "START ASSEMBLY",
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
-                          ),
+                      child: isCreating
+                          ? const SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                      )
+                          : const Text(
+                        "START ASSEMBLY",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                      ),
                     ),
                   ),
                 ),
@@ -342,7 +340,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
       }
 
       await AzureService.syncFullPanel(
-        serial, 
+        serial,
         panelData: kIsWeb ? panelData : null,
         components: kIsWeb ? [] : null,
       );
@@ -354,7 +352,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
             builder: (context) => SectionDashboard(panelSerial: serial, productType: productType),
           ),
         );
-        
+
         Future.delayed(const Duration(seconds: 1), () {
           if (mounted) setState(() => isCreating = false);
         });
@@ -375,11 +373,11 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: Text(title, style: TextStyle(color: primaryGreen, fontWeight: FontWeight.bold)),
         content: TextField(
-          controller: controller, 
-          decoration: InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
-          )
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: label,
+              border: const OutlineInputBorder(),
+            )
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL")),

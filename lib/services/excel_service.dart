@@ -32,7 +32,7 @@ class ExcelService {
     );
 
     Map<String, dynamic>? panelData = panelResult.isNotEmpty ? panelResult.first : null;
-    String productType = panelData?['product_type'] ?? "CPS3000";
+    String productType = panelData?['product_type'] ?? "CPS 3000"; // Updated from CPS3000
 
     sheet.appendRow([TextCellValue("TRACEABILITY REPORT")]);
     sheet.appendRow([]);
@@ -68,7 +68,7 @@ class ExcelService {
     Map<String, List<String>> sections;
     if (productType == "DPS") {
       sections = DPSTemplate.sections;
-    } else if (productType == "DPS 2500") {
+    } else if (productType == "CPS 2500") { // Updated from DPS 2500
       sections = DPS2500Template.sections;
     } else {
       sections = CPS3000Template.sections;
@@ -89,7 +89,7 @@ class ExcelService {
 
     Directory? dir = await getExternalStorageDirectory();
     if (dir == null) throw Exception("Could not access storage");
-    
+
     String newPath = "${dir.path.split("Android")[0]}Download";
     final file = File("$newPath/traceability_$panelSerial.xlsx");
     file
@@ -105,7 +105,7 @@ class ExcelService {
       String route;
       if (productType == "DPS") {
         route = "export_dps_summary";
-      } else if (productType == "DPS 2500") {
+      } else if (productType == "CPS 2500") { // Updated from DPS 2500
         route = "export_dps2500_summary";
       } else {
         route = "export_cps_summary";
@@ -120,10 +120,10 @@ class ExcelService {
 
     final db = await DBHelper.database;
     List<Map<String, dynamic>> panels = await db.query(
-      "panels", 
-      where: "product_type = ?", 
-      whereArgs: [productType],
-      orderBy: "panel_serial DESC"
+        "panels",
+        where: "product_type = ?",
+        whereArgs: [productType],
+        orderBy: "panel_serial DESC"
     );
 
     List<String> headers = [
@@ -140,17 +140,17 @@ class ExcelService {
     ];
 
     List<String> allComponents = [];
-    
+
     // Determine sections based on product type
     Map<String, List<String>> sections;
     if (productType == "DPS") {
       sections = DPSTemplate.sections;
-    } else if (productType == "DPS 2500") {
+    } else if (productType == "CPS 2500") { // Updated from DPS 2500
       sections = DPS2500Template.sections;
     } else {
       sections = CPS3000Template.sections;
     }
-    
+
     sections.forEach((section, components) {
       allComponents.addAll(components);
     });

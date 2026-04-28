@@ -16,10 +16,10 @@ class _PanelListScreenState extends State<PanelListScreen> {
   bool _hasError = false;
   List<Map<String, dynamic>> _allPanels = [];
   List<Map<String, dynamic>> _displayedPanels = [];
-  
+
   final TextEditingController _searchController = TextEditingController();
   final Color backgroundGreen = Colors.green.shade50;
-  
+
   int _pageSize = 20;
   int _currentPage = 1;
 
@@ -49,7 +49,7 @@ class _PanelListScreenState extends State<PanelListScreen> {
         _hasError = true;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("Connection Error: Check Azure logs"),
           backgroundColor: Colors.red,
         ),
@@ -59,7 +59,7 @@ class _PanelListScreenState extends State<PanelListScreen> {
 
   void _applyFilterAndPagination() {
     String query = _searchController.text.toLowerCase();
-    
+
     List<Map<String, dynamic>> filtered = _allPanels.where((p) {
       String serial = (p["panel_serial"] ?? "").toString().toLowerCase();
       return serial.contains(query);
@@ -75,7 +75,7 @@ class _PanelListScreenState extends State<PanelListScreen> {
     setState(() {
       _isLoadingMore = true;
     });
-    
+
     Future.delayed(const Duration(milliseconds: 500), () {
       setState(() {
         _currentPage++;
@@ -90,17 +90,17 @@ class _PanelListScreenState extends State<PanelListScreen> {
     return Scaffold(
       backgroundColor: backgroundGreen,
       appBar: AppBar(
-        title: _isSearching 
-          ? TextField(
-              controller: _searchController,
-              autofocus: true,
-              decoration: const InputDecoration(
-                hintText: "Search Serial No...",
-                border: InputBorder.none,
-              ),
-              onChanged: (v) => _applyFilterAndPagination(),
-            )
-          : const Text("Continue Existing Panel", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: _isSearching
+            ? TextField(
+          controller: _searchController,
+          autofocus: true,
+          decoration: const InputDecoration(
+            hintText: "Search Serial No...",
+            border: InputBorder.none,
+          ),
+          onChanged: (v) => _applyFilterAndPagination(),
+        )
+            : const Text("Continue Existing Panel", style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: !_isSearching,
         backgroundColor: backgroundGreen,
         elevation: 0,
@@ -127,91 +127,91 @@ class _PanelListScreenState extends State<PanelListScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _hasError
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.cloud_off, size: 60, color: Colors.red),
-                      const SizedBox(height: 10),
-                      const Text("Could not connect to Azure SQL"),
-                      TextButton(onPressed: _fetchPanels, child: const Text("RETRY"))
-                    ],
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.cloud_off, size: 60, color: Colors.red),
+            const SizedBox(height: 10),
+            const Text("Could not connect to Azure SQL"),
+            TextButton(onPressed: _fetchPanels, child: const Text("RETRY"))
+          ],
+        ),
+      )
+          : _displayedPanels.isEmpty
+          ? const Center(child: Text("No matching panels found"))
+          : ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        itemCount: _displayedPanels.length + 1,
+        itemBuilder: (context, index) {
+          if (index == _displayedPanels.length) {
+            bool hasMore = _displayedPanels.length < _allPanels.length;
+            if (!hasMore || _searchController.text.isNotEmpty) return const SizedBox(height: 40);
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+              child: _isLoadingMore
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.green.shade700,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+                onPressed: _loadMore,
+                child: const Text("LOAD MORE PANELS"),
+              ),
+            );
+          }
+
+          final panelData = _displayedPanels[index];
+          final String serial = panelData["panel_serial"] ?? "Unknown";
+          final String productType = panelData["product_type"] ?? "CPS 3000"; // Updated from CPS3000
+          final bool isDPS = productType.startsWith("DPS");
+
+          return Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
+              ],
+              border: Border.all(color: Colors.green.shade100, width: 1),
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              leading: Container(
+                width: 50,
+                height: 50,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isDPS ? Colors.blue.shade50 : Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: isDPS ? Colors.blue.shade100 : Colors.green.shade100, width: 1),
+                ),
+                child: Text(
+                  isDPS ? "DPS" : "CPS",
+                  style: TextStyle(
+                    color: isDPS ? Colors.blue.shade700 : Colors.green.shade700,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
-                )
-              : _displayedPanels.isEmpty
-                  ? const Center(child: Text("No matching panels found"))
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      itemCount: _displayedPanels.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == _displayedPanels.length) {
-                          bool hasMore = _displayedPanels.length < _allPanels.length;
-                          if (!hasMore || _searchController.text.isNotEmpty) return const SizedBox(height: 40);
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                            child: _isLoadingMore 
-                              ? const Center(child: CircularProgressIndicator())
-                              : ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: Colors.green.shade700,
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                                  ),
-                                  onPressed: _loadMore,
-                                  child: const Text("LOAD MORE PANELS"),
-                                ),
-                          );
-                        }
-
-                        final panelData = _displayedPanels[index];
-                        final String serial = panelData["panel_serial"] ?? "Unknown";
-                        final String productType = panelData["product_type"] ?? "CPS3000";
-                        final bool isDPS = productType == "DPS";
-
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10, offset: const Offset(0, 4)),
-                            ],
-                            border: Border.all(color: Colors.green.shade100, width: 1),
-                          ),
-                          child: ListTile(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            leading: Container(
-                              width: 50,
-                              height: 50,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: isDPS ? Colors.blue.shade50 : Colors.green.shade50,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: isDPS ? Colors.blue.shade100 : Colors.green.shade100, width: 1),
-                              ),
-                              child: Text(
-                                isDPS ? "DPS" : "CPS",
-                                style: TextStyle(
-                                  color: isDPS ? Colors.blue.shade700 : Colors.green.shade700,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
-                            title: Text(serial, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                            subtitle: Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Text("Project: ${panelData["project_name"] ?? "N/A"}", style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                            ),
-                            trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey.shade400),
-                            onTap: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (_) => SectionDashboard(panelSerial: serial, productType: productType)));
-                            },
-                          ),
-                        );
-                      },
-                    ),
+                ),
+              ),
+              title: Text(serial, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text("Project: ${panelData["project_name"] ?? "N/A"}", style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+              ),
+              trailing: Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey.shade400),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => SectionDashboard(panelSerial: serial, productType: productType)));
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }
