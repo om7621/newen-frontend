@@ -17,7 +17,8 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
   final TextEditingController referenceDocController = TextEditingController();
   final TextEditingController remarksController = TextEditingController();
 
-  String productType = "CPS3000";
+  // MUST match exactly one of the items in availableProductTypes list
+  String productType = "CPS3000"; 
   String? preparedBy;
   String? projectName;
   String? verifiedBy;
@@ -27,6 +28,18 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
   List<String> workersList = ["Operator 1", "Operator 2", "Operator 3"];
   List<String> projectList = ["L&T", "RE+", "ONGC", "Amazon", "Toyota"];
   List<String> verifierList = ["Supervisor 1", "Supervisor 2", "Supervisor 3"];
+
+  // Matches your latest requirement
+  final List<String> availableProductTypes = [
+    "CPS3000", 
+    "CPS 2500", 
+    "CPS 1250", 
+    "DPS", 
+    "DPS 1500", 
+    "DPS 1000", 
+    "DPS 500",
+    "DPS 2500"
+  ];
 
   final Color primaryGreen = const Color(0xFF1B5E20);
   final Color backgroundGreen = Colors.green.shade50;
@@ -63,13 +76,7 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
                     icon: Icons.qr_code_rounded,
                   ),
                   const Divider(height: 1, indent: 50),
-                  _buildDropdown(
-                    label: "Product Type",
-                    value: productType,
-                    items: ["CPS3000", "DPS", "DPS 2500"],
-                    onChanged: (v) => setState(() => productType = v!),
-                    icon: Icons.category_outlined,
-                  ),
+                  _buildProductTypeDropdown(),
                 ]),
                 const SizedBox(height: 24),
                 _buildSectionTitle("Project Details"),
@@ -166,6 +173,23 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
     );
   }
 
+  Widget _buildProductTypeDropdown() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: DropdownButtonFormField<String>(
+        value: availableProductTypes.contains(productType) ? productType : availableProductTypes.first,
+        decoration: InputDecoration(
+          icon: Icon(Icons.category_outlined, size: 22, color: primaryGreen),
+          labelText: "Product Type",
+          border: InputBorder.none,
+          labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+        ),
+        items: availableProductTypes.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+        onChanged: (v) => setState(() => productType = v!),
+      ),
+    );
+  }
+
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 8),
@@ -216,29 +240,6 @@ class _CreatePanelScreenState extends State<CreatePanelScreen> {
           border: InputBorder.none,
           labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
         ),
-      ),
-    );
-  }
-
-  Widget _buildDropdown({
-    required String label,
-    required String value,
-    required List<String> items,
-    required Function(String?) onChanged,
-    required IconData icon,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: DropdownButtonFormField<String>(
-        value: items.contains(value) ? value : items.first,
-        decoration: InputDecoration(
-          icon: Icon(icon, size: 22, color: primaryGreen),
-          labelText: label,
-          border: InputBorder.none,
-          labelStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
-        ),
-        items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-        onChanged: onChanged,
       ),
     );
   }

@@ -9,11 +9,13 @@ import '../Database/db_helper.dart';
 import 'dart:async';
 
 class ExcelService {
+  // Updated to the new Azure Backend URL
+  static const String _backendUrl = "https://newen-traceability-backend-decsebgxgfdygfem.centralindia-01.azurewebsites.net";
 
   // Method for exporting a SINGLE panel report
   static Future<String> exportPanelReport(String panelSerial) async {
     if (kIsWeb) {
-      final url = "https://newen-tracibility.azurewebsites.net/export_excel?panel=$panelSerial";
+      final url = "$_backendUrl/export_excel?panel=$panelSerial";
       return "WEB_DOWNLOAD:$url";
     }
 
@@ -100,7 +102,6 @@ class ExcelService {
   // Method for exporting the MASTER summary report
   static Future<String> exportFullSummaryReport(String productType) async {
     if (kIsWeb) {
-      // Choose the new separate route based on product type
       String route;
       if (productType == "DPS") {
         route = "export_dps_summary";
@@ -109,7 +110,7 @@ class ExcelService {
       } else {
         route = "export_cps_summary";
       }
-      final url = "https://newen-tracibility.azurewebsites.net/$route";
+      final url = "$_backendUrl/$route";
       return "WEB_DOWNLOAD:$url";
     }
 

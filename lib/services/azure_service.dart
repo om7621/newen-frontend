@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import '../Database/db_helper.dart';
 
 class AzureService {
-  static const String baseUrl = "https://newen-tracibility.azurewebsites.net";
+  // Updated to the new Azure Backend URL
+  static const String baseUrl = "https://newen-traceability-backend-decsebgxgfdygfem.centralindia-01.azurewebsites.net";
 
   static Map<String, String> get _headers => {
     "Content-Type": "application/json",

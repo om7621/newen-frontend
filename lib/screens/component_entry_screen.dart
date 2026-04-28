@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../templates/cps3000_template.dart';
 import '../templates/dps_template.dart';
+import '../templates/dps2500_template.dart';
 import '../templates/component_make_template.dart';
 import 'barcode_scanner_screen.dart';
 import '../Database/db_helper.dart';
@@ -36,8 +37,11 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
   @override
   void initState() {
     super.initState();
-    // Load components based on product type
-    if (widget.productType == "DPS") {
+    
+    // Updated Logic: Correctly switch templates for all 3 product types
+    if (widget.productType == "DPS 2500") {
+      components = DPS2500Template.sections[widget.sectionName] ?? [];
+    } else if (widget.productType == "DPS") {
       components = DPSTemplate.sections[widget.sectionName] ?? [];
     } else {
       components = CPS3000Template.sections[widget.sectionName] ?? [];
@@ -99,7 +103,7 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
         });
       }
     } catch (e) {
-      print("Fetch error: $e");
+      debugPrint("Fetch error: $e");
     } finally {
       setState(() => isLoading = false);
     }
@@ -150,15 +154,12 @@ class _ComponentEntryScreenState extends State<ComponentEntryScreen> {
         }
       }
 
-      if (kIsWeb) {
-        await AzureService.syncFullPanel(
-          widget.panelSerial,
-          panelData: {"panel_serial": widget.panelSerial, "product_type": widget.productType},
-          components: allComponentsToUpload,
-        );
-      } else {
-        await AzureService.syncFullPanel(widget.panelSerial);
-      }
+      // Ensure panelData is sent correctly with the right Product Type
+      await AzureService.syncFullPanel(
+        widget.panelSerial,
+        panelData: kIsWeb ? {"panel_serial": widget.panelSerial, "product_type": widget.productType} : null,
+        components: kIsWeb ? allComponentsToUpload : null,
+      );
       
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Data Synced to Cloud")));
     } catch (e) {

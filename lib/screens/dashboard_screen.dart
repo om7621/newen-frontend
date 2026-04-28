@@ -37,7 +37,8 @@ class DashboardScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        // Brand Identity with sophisticated shadow
+                        const SizedBox(height: 20),
+                        // Brand Identity
                         Container(
                           padding: const EdgeInsets.all(25),
                           decoration: BoxDecoration(
